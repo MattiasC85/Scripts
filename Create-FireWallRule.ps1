@@ -1,4 +1,4 @@
-#Also Working in WinPE 10
+#Verified in WinPE 10 / Win10
 #Defaults to create an incoming rule which allows the TCP protocol on choosen port(s)
 
 Param (
