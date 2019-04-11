@@ -11,3 +11,5 @@ UserSid-Coverter.ps1 - Converts SID/Username back and forwards.
 Get-CredentialGuardStatus.ps1 - CredentialGuard configuration and service status.
 
 Get-InstalledUpdates.ps1 - Installed updates by searching history.
+
+Get-RegistryKeyLastWriteTime.ps1 - Get LastWriteTime of registry key
