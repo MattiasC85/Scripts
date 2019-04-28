@@ -1,4 +1,4 @@
-﻿# Should exclude most VPN-connections as well.
+﻿# Should exclude most (3rd party) VPN-connections as well.
 
 $wired=$null
 $wireless=$null
