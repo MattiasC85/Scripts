@@ -1,8 +1,8 @@
 ﻿Param (
    [Parameter(ValueFromPipelineByPropertyName,Mandatory=$True)]
-   [string] $PathOfSymlink,
+   $PathOfSymlink,
    [Parameter(ValueFromPipelineByPropertyName,Mandatory=$True)]
-   [string] $Target,
+   $Target,
    [Parameter(ValueFromPipelineByPropertyName,Mandatory=$False)]
    [bool] $TargetIsTSVariable=$False
 )
