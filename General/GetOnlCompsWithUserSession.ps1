@@ -29,10 +29,8 @@ $Domain=(Get-ADDomain $BuildDomainName).NetBIOSName
 }
 
 #write-host $Domain
-#$computer = "CM1"
 $namespace = "ROOT\SMS\site_$SiteName"
 $classname = "SMS_CombinedDeviceResources"
-$namespace = "ROOT\SMS\site_CM1"
 #$Domain=$Domain.ToUpper()
 
 #write-host $Domain
