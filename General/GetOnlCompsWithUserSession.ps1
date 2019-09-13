@@ -1,3 +1,14 @@
+<#
+.Synopsis
+   Gets all the online computers that matches the username and Domain variables.
+.DESCRIPTION
+   Work in progress
+.EXAMPLE
+   GetOnlCompsWithUserSession.ps1 -SiteServer cm1 -SiteName cm1 -UserName ad
+.EXAMPLE
+   GetOnlCompsWithUserSession.ps1 -SiteServer cm1 -SiteName cm1 -UserName %lkd% -Domain RemoteDomain
+#>
+
 Param (
    [Parameter(ValueFromPipelineByPropertyName,Mandatory=$True)]
    [string] $SiteServer,
