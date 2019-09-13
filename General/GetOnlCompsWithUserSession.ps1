@@ -25,6 +25,7 @@ if ($UserName.Contains('%') -eq $false)
 {
 write-host "Observe that UserName is accepting Wildcards in the form of '%'" -ForegroundColor DarkYellow
 }
+$BuildDomainName=$null
 if ($Domain.Contains(".") -eq $true)
 {
     $SplitDomain=$Domain.ToString().Split(".")
