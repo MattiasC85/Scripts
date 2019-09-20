@@ -37,7 +37,10 @@ if ($Domain.Contains(".") -eq $true)
 
     $BuildDomainName=($BuildDomainName.SubString(0,$BuildDomainName.Length-1))
 
+$UserName=$UserNAme.Replace($Domain,(Get-ADDomain $BuildDomainName).NetBIOSName)
 $Domain=(Get-ADDomain $BuildDomainName).NetBIOSName
+
+write-host "Domain:" $Domain
 }
 
 
@@ -46,5 +49,6 @@ $namespace = "ROOT\SMS\site_$SiteName"
 $classname = "SMS_CombinedDeviceResources"
 
 $UserName=$UserName.ToLower().Replace(($Domain.ToLower()+"\"),"")
-#Write-Host "cur:" $UserName
+Write-Host "Username:" $UserName
 Get-WmiObject -Query "select Name,ResourceID,CNIsOnline,CurrentLogonUser from SMS_CombinedDeviceResources where CurrentLogonUser like '$Domain\\$UserName' and CNIsOnline=1" -ComputerName $SiteServer -Namespace $namespace | select Name, CurrentLogonUser, ResourceID, CNIsOnline
+
