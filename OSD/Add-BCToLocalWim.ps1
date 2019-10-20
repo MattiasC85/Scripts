@@ -166,7 +166,7 @@ $OldTmpEnv=[System.Environment]::GetEnvironmentVariable("tmp")
 $NewTmpEnv=[System.Environment]::SetEnvironmentVariable("tmp",$NewTmpFolder)
 
 
-            #Don't know how Bob is, but he's next in line. ^^
+            #Don't know who Bob is, but he's next in line. ^^
 
 & "$WinPEGenDir\$Arch\WinPEGen.exe" "$WimRootDir\$BuildNumber\install.wim" $index "$ImageLocalPath" 1
 [System.Environment]::SetEnvironmentVariable("tmp", $OldTmpEnv)
