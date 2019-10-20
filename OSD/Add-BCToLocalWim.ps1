@@ -20,6 +20,8 @@ Version 0.1 - 20191020 - Initial POC
 
 Mattias Cedervall
 
+For details: https://someguy100.wixsite.com/sccm802dot1x/blog/add-branchcache-support-to-winpe-without-modifying-any-central-boot-image
+
 #>
 
 Param(
