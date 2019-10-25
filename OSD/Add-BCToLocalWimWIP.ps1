@@ -119,7 +119,7 @@ $TSEnv.Value("OSDDownloadDestinationVariable") =[System.String]::Empty
 $ImageLocalPath=(Get-Item -Path "$imageDir\*" -Filter *.wim).FullName
 
 
-            #There's a better way of getting this info, see the function PSobjectFromOutput. Just havn't had time to implement it yet.
+            #PSobjectFromOutput.
 
 $ImageInfo=Dism.exe /Get-WimInfo /WimFile:"$ImageLocalPath" /index:1
 
