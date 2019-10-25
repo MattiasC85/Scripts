@@ -201,7 +201,10 @@ if ($RunPEGen -eq $true)
     Start-Sleep -s 2
 
                 #Restore the tmp variable before exiting
-    AbortWithExitCode $lastexit
+    if ($lastexit -ne 0)
+    {
+        AbortWithExitCode $lastexit
+    }
 
 
                 #Check if the bootimage has been changed.
