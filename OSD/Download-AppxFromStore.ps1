@@ -1,21 +1,18 @@
 <#
-
 Downloads any free app and its dependencies from the Microsoft store.
 
-
 Drivers are starting to implement store apps to be fully functional.
-The analog 3.5mm headphone not working on some models without the app.
+The analogue 3.5mm headphone connector not working on some models without the app.
 The driver package from the manufacturer only contains a batch file which opens the store in your web browser.
 And I can't find the app in the business store...
 
 Also heard of a similar case with the thunderbolt app.
 
 If the manufacturers would include these in their driver packages I wouldn't have to do this.
-But I can see why..
+But I can see why they don't..
 
 There's this "small" issue with deploying .Appx and AppxBundles during an OSD.
-But that script will be done and uploaded in a cuple of days or so.
-
+But that script will be done and uploaded in a cuple of days or so. :)
 
 
 The real heroes here are the ppl behind this site:
@@ -23,13 +20,10 @@ https://store.rg-adguard.net/api/GetFiles
 
 I'm just poking their API.
 
-
-
 -StoreURL Examples:
 
 -StoreURL https://www.microsoft.com/store/apps/9n6f0jv38ph1
 -StoreURL https://www.microsoft.com/en-us/p/thunderbolt-control-center/9n6f0jv38ph1
-
 #>
 
 Param (
