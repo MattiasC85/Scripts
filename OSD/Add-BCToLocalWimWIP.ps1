@@ -1,6 +1,6 @@
 <#
 
-Version: 0.2
+Version: 0.3
 
 Add-BCToLocalWim.ps1
 - Adds branch cache support to WinPE without having to change the central boot images.
@@ -17,7 +17,8 @@ Boot image is 1809 (Has the buildnumber 17763)
 
 The script then tries to find \\dp1\Win10Wims\17763\Install.wim
 
-Versnio 0.2 - 20191025 - Added if's, some additional logging and made a psobject out of the dism output.
+Version 0.3 - 20191129 - added verification of paths, added ProgressUI error dialog and output from WinPEGen
+Version 0.2 - 20191025 - Added if's, some additional logging and made a psobject out of the dism output.
 Version 0.1 - 20191020 - Initial POC
 
 Mattias Cedervall
@@ -28,12 +29,26 @@ Param(
     [Parameter(Mandatory=$True)]
     [String] $WimRootDir,
     [Parameter(ParameterSetName="SKU")]
-    [String] $SKU="Ent"
+    [String] $SKU="Ent",
+    [Parameter(Mandatory=$False)]
+    [Switch] $PEGenOutToLog
 )
 
-
-function AbortWithExitCode ($ExtCode)
+#Controls the index used when mounting Install.wim
+ 
+switch ($SKU)
 {
+ "Ent" {$index=3}
+ "Edu" {$index=1}
+}
+
+
+
+function AbortWithExitCode ($ExtCode,$Msg)
+{   
+    $tsProgressUI=New-Object -ComObject Microsoft.Sms.TSProgressUI
+    $tsProgressUI.ShowErrorDialog($TSEnv["_SMSTSOrgName"],$TSEnv["_SMSTSPackageName"],$TSEnv["_SMSTSPackageName"],$Msg,[string]$ExtCode,180,0,$TSEnv["_SMSTSCurrentActionName"])
+    #$TSEnv.Value("TSDisableProgressUI")="True"
     Stop-Transcript
     Exit $ExtCode
 }
@@ -52,18 +67,24 @@ function PSobjectFromOutput ([String[]]$strArray, [int]$StartLine, [String]$Patt
 return $PSCustomObject
 }
 
-#Controls the index used when mounting Install.wim
- 
-switch ($SKU)
-{
- "Ent" {$index=3}
- "Edu" {$index=1}
+function VerifyPath ($Path,$Name)
+{	
+	if ($Path -in ($null,""))
+	{
+	  AbortWithExitCode 1 "$Name - Path is null`/empty"
+	  return
+	}
+	$Result=Test-path "$Path"
+	if ($Result -eq $False)
+	{
+		AbortWithExitCode 5 "$Name - $Path was not found"
+	}
+	else
+	{
+		write-host "$Name - path was found"
+	}
 }
-
-
-
 ################ MAIN #####################
-
 
 $tsenv=New-Object -ComObject Microsoft.Sms.TSEnvironment
 $LogDir=$tsenv.Value("_SMSTSLogPath")
@@ -101,7 +122,7 @@ write-host "Download Exit Code:" $Proc.ExitCode.ToString()
 if ($Proc.ExitCode -ne 0)
 {
     write-host "Download Failed"
-    AbortWithExitCode $Proc.ExitCode
+    AbortWithExitCode $Proc.ExitCode "Error while downloading boot image."
 }
 
             #Gets the directory of the downloaded Wim.
@@ -118,8 +139,7 @@ $TSEnv.Value("OSDDownloadDestinationVariable") =[System.String]::Empty
 
 $ImageLocalPath=(Get-Item -Path "$imageDir\*" -Filter *.wim).FullName
 
-
-            #PSobjectFromOutput.
+VerifyPath "$ImageLocalPath" "Boot Wimfile"
 
 $ImageInfo=Dism.exe /Get-WimInfo /WimFile:"$ImageLocalPath" /index:1
 
@@ -163,6 +183,16 @@ Write-host "Architecture: $Arch"
 
             #A Good place to force an error if a Win10-source for the current build isn't found.
 
+
+
+$Win10Wim="$WimRootDir\$BuildNumber\install.wim"
+write-host "Win10 Wim Path: $Win10Wim"
+VerifyPath "$Win10Wim" "Win10 Wimfile"
+
+VerifyPath "$WinPEGenDir\$Arch\WinPEGen.exe" "WinPEGen Path"
+
+
+            #Extra check
 $RunPEGen=$false
 if (([System.IO.File]::Exists("$WimRootDir\$BuildNumber\install.wim")) -and ([System.IO.File]::Exists($ImageLocalPath)))
 {
@@ -176,9 +206,6 @@ if ($RunPEGen -eq $true)
     write-host "Starting WinPEGen"
                 #Write output to the console.
 
-    write-host "CommandLine: $WinPEGenDir\$Arch\WinPEGen.exe" $WimRootDir\$BuildNumber\install.wim $index $ImageLocalPath 1
-
-
                 #Save the hash in order to check if the wim was changed.
 
     $PreEditHash=(Get-FileHash "$ImageLocalPath").Hash
@@ -191,11 +218,19 @@ if ($RunPEGen -eq $true)
 
 
                 #Don't know who Bob is, but he's next in line. ^^
-
-    $PEGenProc=& "$WinPEGenDir\$Arch\WinPEGen.exe" "$WimRootDir\$BuildNumber\install.wim" $index "$ImageLocalPath" 1
+    #$index=7
+    
+    write-host "CommandLine: $WinPEGenDir\$Arch\WinPEGen.exe" $WimRootDir\$BuildNumber\install.wim $index $ImageLocalPath 1
+    $PEGenOut=& "$WinPEGenDir\$Arch\WinPEGen.exe" "$WimRootDir\$BuildNumber\install.wim" $index "$ImageLocalPath" 1
     $lastexit=$LASTEXITCODE
     Write-host "LASTEXITCODE after WinPEGen:" $lastexit
+                        
+                 #write the output of WinPEGen to the log.
 
+    if ($PEGenOutToLog)
+    {
+        Write-output $PEGenOut
+    }
     
     [System.Environment]::SetEnvironmentVariable("tmp", $OldTmpEnv)
     Start-Sleep -s 2
@@ -203,9 +238,9 @@ if ($RunPEGen -eq $true)
                 #Restore the tmp variable before exiting
     if ($lastexit -ne 0)
     {
-        AbortWithExitCode $lastexit
+	    write-host $PEGenOut[($PEGenOut.Count-3)..($PEGenOut.Count-1)]
+        AbortWithExitCode $lastexit "WinPEGen message: $($PEGenOut[($PEGenOut.Count-3)..($PEGenOut.Count-1)])"
     }
-
 
                 #Check if the bootimage has been changed.
 
@@ -215,11 +250,16 @@ if ($RunPEGen -eq $true)
     {
         $TSEnv.Value("BCGood2Go") = "True"
     }
+    else
+    {
+        AbortWithExitCode 10 "The Boot image was unchanged.`r`n Start the script with '-PEGenOutToLog' and check $LogDir\Add-BCToLocalWim.log for more details."
+    }
 }
 else
 {
-Write-host "Couldn't find the files needed for WinPEGen."
-AbortWithExitCode 666
-#$WimRootDir\$BuildNumber""
+$text="Couldn't find the files needed for WinPEGen."
+Write-host $text
+AbortWithExitCode 666 $text
+
 }
 Stop-Transcript
