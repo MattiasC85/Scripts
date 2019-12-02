@@ -1,4 +1,13 @@
-﻿    Param (
+<#
+
+Only tested this to after the "state restore"-group.
+I made a big mistake, assuming that if it works up until then, it would work for the rest of the OSD as well.
+But the client agent is actually initiated for program/application installations. And that will fail since the 
+client will recieve the unmodified policy.
+Working on  a fix atm.
+
+#>
+Param (
         [parameter(Mandatory = $true)]
         [string]$TSDeploymentID
     )
