@@ -1,5 +1,9 @@
 <#
 
+Edit2:
+Oh, think I know what happend now... Went from 1810->1910 a week ago and the pre-production went live this Sunday.
+Darn _*-Policies :P
+
 Only tested this to after the "state restore"-group.
 I made a big mistake, assuming that if it works up until then, it would work for the rest of the OSD as well.
 But the client agent is actually initiated for program/application installations. And that will fail since the 
