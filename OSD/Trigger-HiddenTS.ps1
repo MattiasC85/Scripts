@@ -1,7 +1,7 @@
 <#
 
 Edit2:
-Oh, think I know what happend now... Went from 1810->1910 a week ago and the pre-production went live this Sunday.
+Oh, think I know what happend now... Went from 1810->1906 a week ago and the pre-production went live this Sunday.
 Darn _*-Policies :P
 
 Only tested this to after the "state restore"-group.
