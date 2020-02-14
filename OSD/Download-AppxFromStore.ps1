@@ -2,7 +2,7 @@
 
 Update 2020-02-14
 Thanks @jarwidmark for letting me know that this had Office as a dependency and for testing the workaround.
-	-The script now works even if you don't have office installed.
+	-The script now works even if you don't have Office installed.
 
 Downloads any free app and its dependencies from the Microsoft store.
 
