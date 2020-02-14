@@ -1,4 +1,9 @@
 <#
+
+Update 2020-02-14
+Thanks @jarwidmark for letting me know that this had Office as a dependency and for testing the workaround.
+	-The script now works even if you don't have office installed.
+
 Downloads any free app and its dependencies from the Microsoft store.
 
 Drivers are starting to implement store apps to be fully functional.
@@ -63,9 +68,17 @@ $TableEnd=($HtmlResult.LastIndexOf("</table>")+8)
 
 $SemiCleaned=$HtmlResult.Substring($start,$TableEnd-$start)
 
+#https://stackoverflow.com/questions/46307976/unable-to-use-ihtmldocument2
 $newHtml=New-Object -ComObject "HTMLFile"
-$newHtml.IHTMLDocument2_write($SemiCleaned)
-
+try {
+    # This works in PowerShell with Office installed
+    $newHtml.IHTMLDocument2_write($SemiCleaned)
+}
+catch {
+    # This works when Office is not installed    
+    $src = [System.Text.Encoding]::Unicode.GetBytes($SemiCleaned)
+    $newHtml.write($src)
+}
 
 $ToDownload=$newHtml.getElementsByTagName("a") | Select-Object textContent, href
 
