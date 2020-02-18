@@ -1,5 +1,8 @@
 <#
 
+Update 2020-02-18
+Thanks @BruceDawson0xB for pointing out the flaw in the regex pattern. if %tmp% began with a lowercase char the script would fail.
+
 Update 2020-02-14
 Thanks @jarwidmark for letting me know that this had Office as a dependency and for testing the workaround.
 	-The script now works even if you don't have Office installed.
@@ -87,8 +90,10 @@ $SavePathRoot=$([System.Environment]::ExpandEnvironmentVariables("$SavePathRoot"
 $LastFrontSlash=$StoreURL.LastIndexOf("/")
 $ProductID=$StoreURL.Substring($LastFrontSlash+1,$StoreURL.Length-$LastFrontSlash-1)
 
+# OldRegEx   Failed when the %tmp% started with a lowercase char
+#if ([regex]::IsMatch("$SavePathRoot\$ProductID","([,!@?#$%^&*()\[\]]+|\\\.\.|\\\\\.|\.\.\\\|\.\\\|\.\.\/|\.\/|\/\.\.|\/\.|;|(?<![A-Z]):)|^\w+:(\w|.*:)"))
 
-if ([regex]::IsMatch("$SavePathRoot\$ProductID","([,!@?#$%^&*()\[\]]+|\\\.\.|\\\\\.|\.\.\\\|\.\\\|\.\.\/|\.\/|\/\.\.|\/\.|;|(?<![A-Z]):)|^\w+:(\w|.*:)"))
+if ([regex]::IsMatch("$SavePathRoot\$ProductID","([,!@?#$%^&*()\[\]]+|\\\.\.|\\\\\.|\.\.\\\|\.\\\|\.\.\/|\.\/|\/\.\.|\/\.|;|(?<![A-Za-z]):)|^\w+:(\w|.*:)"))
 {
     write-host "Invalid characters in path"$SavePathRoot\$ProductID""
     exit
