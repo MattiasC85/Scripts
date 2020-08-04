@@ -5,8 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-//Note to self:checkout https://github.com/lihas/windows-DPI-scaling-sample/blob/master/DPIHelper/DpiHelper.cpp
-//https://stackoverflow.com/questions/35233182/how-can-i-change-windows-10-display-scaling-programmatically-using-c-sharp
+
+//https://someguy100.wixsite.com/sccm802dot1x/post/the-resolution-of-getting-the-current-resolution
 
 namespace Displayhelper
 {
