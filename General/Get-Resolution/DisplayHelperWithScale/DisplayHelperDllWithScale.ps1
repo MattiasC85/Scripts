@@ -2,10 +2,10 @@
 #
 #
 #
-#  2020-08-13
-#  v 1.0.0.1
-#  * Fixes and enables the use of RefreshRate (Hz) with "Set-Resolution"
-#
+#   2020-08-13
+#   v 1.0.0.1
+#   * Fixes and enables the use of RefreshRate (Hz) with "Set-Resolution"
+#   https://someguy100.wixsite.com/sccm802dot1x/post/set-the-resolution-of-each-monitor-even-in-winpe
 #
 #
 #
