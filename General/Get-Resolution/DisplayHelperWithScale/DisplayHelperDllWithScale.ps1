@@ -1,4 +1,16 @@
-﻿#Add-Type $pinvokeCode -ReferencedAssemblies System.Drawing,PresentationFramework, System.Windows.Forms, System.Management.Automation, Microsoft.Csharp -PassThru -IgnoreWarnings | Out-Null
+﻿#####################################################################################
+#
+#
+#
+#  2020-08-13
+#  v 1.0.0.1
+#  * Fixes and enables the use of RefreshRate (Hz) with "Set-Resolution"
+#
+#
+#
+#
+#####################################################################################
+
 
 Add-type -Path $PSScriptRoot\DisplayHelper.dll
 
@@ -171,6 +183,7 @@ Function Set-Resolution
                 if ($fakeBoundNamed.Count -gt 0)
                 {
                     $Displ=$fakeBoundNamed["MonitorName"]
+                    $Monitor=(Get-Monitors | Where-Object -Property Name -EQ $Displ)
                 }
 
                 #Resolution
@@ -185,6 +198,29 @@ Function Set-Resolution
                 $AttCol.Add($ValidateSetAttribute)
                 $RuntimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($Resolution, [string], $AttCol)
                 $RuntimeParamDict.Add($Resolution, $RuntimeParameter)
+                
+                if ($fakeBoundNamed.Count -gt 0)
+                {
+                    if ($fakeBoundNamed["Resolution"])
+                    {
+                        $ResOfChoice=$fakeBoundNamed["Resolution"]
+                        Write-host "Resolution found"
+                    }
+                }
+
+
+                #RefreshRate
+                $RefreshRate='RefreshRate'
+                $AttCol = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+                $PSParamAttribute = New-Object System.Management.Automation.ParameterAttribute
+                $PSParamAttribute.Mandatory = $false
+                $PSParamAttribute.ValueFromPipeline=$true
+                $AttCol.Add($PSParamAttribute)
+                $arrSet=(Get-Resolution -ShowAllResolutions -Monitors $Monitor.Name | Where-Object -Property Name -EQ $ResOfChoice).RefreshRates
+                $ValidateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute([string[]]$arrset)
+                $AttCol.Add($ValidateSetAttribute)
+                $RuntimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($RefreshRate, [int], $AttCol)
+                $RuntimeParamDict.Add($RefreshRate, $RuntimeParameter)
                 
                 
                 }
@@ -209,7 +245,11 @@ Function Set-Resolution
                        #$MsgHit=[System.Windows.Forms.MessageBox]::Show($PSBoundParameters.Resolution)
                        $reslist=([Displayhelper.DisplayInfo+DisplayMonitor]$monitor).GetResolutionList()
                        $ChoosenRes=$reslist | Where-Object -Property Name -eq $PSBoundParameters.Resolution
-                       $var=([Displayhelper.DisplayInfo+DisplayMonitor]$monitor).SetMonitorResolution($ChoosenRes)
+                       if ($RefreshRate)
+                       {
+                            $var=([Displayhelper.DisplayInfo+DisplayMonitor]$monitor).SetMonitorResolution($ChoosenRes,$PSBoundParameters.RefreshRate)
+                       }
+
                        $var
                 }
                     
