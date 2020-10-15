@@ -84,6 +84,6 @@ else
 
 # CM doesn't care about the return nor does it rerun the discovery script after the remediation script has been run.
 # If the remediation script failes it will still be reported as "Compliant".
-# If you want to know if the remediation script failed, you need to catch the errors use an exit code, e.g. "Exit 1"
+# If you want to know if the remediation script failed, you need to catch the errors and use an exit code, e.g. "Exit 1"
 
 $Compliance
