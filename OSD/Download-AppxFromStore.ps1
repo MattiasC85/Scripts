@@ -24,7 +24,7 @@ But that script will be done and uploaded in a cuple of days or so. :)
 
 
 The real heroes here are the ppl behind this site:
-https://store.rg-adguard.net/api/GetFiles
+https://store.rg-adguard.net
 
 I'm just poking their API.
 
