@@ -26,7 +26,7 @@
             }
         }
         else {
-            $FileName = $($MSStoreObj.FileName)
+            #$FileName = $($MSStoreObj.FileName)
             $FileName = $($Url -split "/")[-1]
         }
 
