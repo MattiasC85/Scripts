@@ -819,22 +819,22 @@ function Get-StoreURLS
    Returns direct download links for MSStore apps and this time without any 3rd-party involved.
 
 .PARAMETER ProductNumber
-The Product number. Can be found in the URL, eg "https://apps.microsoft.com/detail/9wzdncrfhvn5" where "9wzdncrfhvn5" is the product number.
+   The Product number. Can be found in the URL, eg "https://apps.microsoft.com/detail/9wzdncrfhvn5" where "9wzdncrfhvn5" is the product number.
 
 .PARAMETER Architecture
-The target architecture of which links that should be included. x86, x64, arm or arm64.
+   The target architecture of which links that should be included. x86, x64, arm or arm64.
 
 .PARAMETER DoDownload
-Will download all the files found to the folder %temp%\$ProductNumber
+   Will download all the files found to the folder %temp%\$ProductNumber
 
 .EXAMPLE
-PS> Get-StoreURLS -ProductNumber 9wzdncrfhvn5
+   PS> Get-StoreURLS -ProductNumber 9wzdncrfhvn5
 
 .EXAMPLE
-PS> $URLS = Get-StoreURLS -ProductNumber xp8bt8dw290mpq -Architecture x64
+   PS> $URLS = Get-StoreURLS -ProductNumber xp8bt8dw290mpq -Architecture x64
 
 .EXAMPLE
-PS> $URLS = Get-StoreURLS -ProductNumber 9wzdncrfhvn5 -Architecture x64 -DoDownload
+   PS> $URLS = Get-StoreURLS -ProductNumber 9wzdncrfhvn5 -Architecture x64 -DoDownload
               
 #>
 
