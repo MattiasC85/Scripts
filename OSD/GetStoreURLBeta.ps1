@@ -1126,7 +1126,7 @@ PS> $URLS = Get-StoreURLS -ProductNumber 9wzdncrfhvn5 -Architecture x64 -DoDownl
 
     if ($BetaOnlyLatestVersions.IsPresent)
     {
-        Write-Host "Trying to exlude older versions..."
+        Write-Host "Trying to exclude older versions..."
         $ToReturn = Get-OnlyLatestVersionsBeta -ProductObject $ProductInfoObj -URLsObject $ToReturn
     }
 
