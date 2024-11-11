@@ -1,4 +1,4 @@
-﻿function Download-Files
+function Download-Files
 {
     Param (
     [Parameter(Mandatory=$true)]
@@ -47,10 +47,24 @@ function Get-OnlyLatestVersionsBeta
 
     $PkgName = $($ProductObject.PackageName -split "_")[0]
 
+    Write-Verbose "PkgName: $PkgName"
+
     [array]$AffectedURLs = $URLsObject | Where {$_.FileName.StartsWith($PkgName)}
     [array]$AffectedURLs | % {Add-Member -InputObject $_ -MemberType NoteProperty -Name FileType -Value "$($_.FileName.Split(".")[-1])"}
     [array]$AffectedURLs | % {Add-Member -InputObject $_ -MemberType NoteProperty -Name Ver -Value $($_.FileName -Split "_")[1]}
     [array]$AffectedURLs | % {Add-Member -InputObject $_ -MemberType AliasProperty -Name Version -Value Ver -SecondValue version}
+
+
+    <# Sometimes the packages contains multiple apps named different. Only filter main package.
+    e.g.
+          AppleInc.iTunes_12134.4.3008.0_neutral <-----------
+          AppleInc.iTunes.iPodVoiceOver_1430.3.3001.0_neutral_~_nzyj5cx40ttqa
+          AppleInc.iTunes.MobileDeviceSupport_18000.33.3001.0_neutral_~_nzyj5cx40ttqa
+    #>
+
+    [array]$AffectedURLs = $AffectedURLs | Where {$_.FileName -like "$PkgName`_$($_.$Ver)*"}
+
+    #Write-Host "0: $PkgName`_$($AffectedURLs[0].Ver)"
 
     $Grouped = $AffectedURLs | Group-Object -Property FileType
     #Write-Host "Group count: $($Grouped.Count)"
@@ -64,7 +78,6 @@ function Get-OnlyLatestVersionsBeta
         foreach ($Archgroup in ($ArchGroup | Where {$_.Count -gt 1})) {
             $count = $($Archgroup.count)
             $top = $Archgroup.Group | Sort-Object -Property Version | Select-Object -First $($count -1)
-            #Write-Host "Top: $($top.FileName)"
             $top
         }
         
@@ -75,7 +88,7 @@ function Get-OnlyLatestVersionsBeta
     
     Foreach ($Removed in $ToRemove)
     {
-        Write-Verbose "Excluded file: $($Removed.FileName)"
+        Write-Verbose "$($Removed.FileName)"
     }
 
     return $URLsObject | Where {$($_.FileName) -notin ($ToRemove.FileName)}
@@ -1106,6 +1119,12 @@ function Get-StoreURLSBeta
         Write-Error "No URLs found for store app!"
         return
     }
+    
+    [array]$ToReturn = $objs | Where {$_.FileName -match "_$Architecture`_" -or $_.Filename -match "_neutral"}
+
+    $ToReturn | Add-Member -MemberType ScriptMethod -Name "Download" -Value {param([string] $ID=$($this.ProductNumber), [object]$StoreObj = $([array]$this), [string]$DownloadFolder = [System.Environment]::GetEnvironmentVariable("Temp")) Download-Files -ID $ID -MSStoreObj $StoreObj -DownloadPath $DownloadFolder}
+    
+    Add-ArchitectureBeta -URLsObject $ToReturn
 
     if ($BetaIncludeEncFiles.IsPresent -eq $False)
     {
@@ -1115,14 +1134,13 @@ function Get-StoreURLSBeta
         
         if ($EncFiles.Count -gt 0 ) {
             Write-Host "Removed $($EncFiles.Count) encrypted files from the list."
+            Write-Verbose "Excluded files:"
+            foreach ($encFile in $EncFiles)
+            {
+                Write-Verbose "$($encFile.FileName)"
+            }
         }
     }
-    
-    [array]$ToReturn = $objs | Where {$_.FileName -match "_$Architecture`_" -or $_.Filename -match "_neutral"}
-
-    $ToReturn | Add-Member -MemberType ScriptMethod -Name "Download" -Value {param([string] $ID=$($this.ProductNumber), [object]$StoreObj = $([array]$this), [string]$DownloadFolder = [System.Environment]::GetEnvironmentVariable("Temp")) Download-Files -ID $ID -MSStoreObj $StoreObj -DownloadPath $DownloadFolder}
-    
-    Add-ArchitectureBeta -URLsObject $ToReturn
 
     if ($BetaOnlyLatestVersions.IsPresent)
     {
