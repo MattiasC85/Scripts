@@ -55,7 +55,7 @@ function Get-OnlyLatestVersionsBeta
     $Grouped = $AffectedURLs | Group-Object -Property FileType
     #Write-Host "Group count: $($Grouped.Count)"
 
-    $ToRemove = foreach ($group in ($Grouped | Where {$_.Count -gt 1}))
+    [array]$ToRemove = foreach ($group in ($Grouped | Where {$_.Count -gt 1}))
     {
         #Write-Host "GroupName: $($group.Name)"
 
