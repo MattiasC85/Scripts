@@ -59,7 +59,7 @@ function Get-OnlyLatestVersionsBeta
     e.g.
           AppleInc.iTunes_12134.4.3008.0_neutral <-----------
           AppleInc.iTunes.iPodVoiceOver_1430.3.3001.0_neutral
-          AppleInc.iTunes.MobileDeviceSupport_18000.33.3001.0
+          AppleInc.iTunes.MobileDeviceSupport_18000.33.3001.0_neutral
     #>
 
     [array]$AffectedURLs = $AffectedURLs | Where {$_.FileName -like "$PkgName`_$($_.$Ver)*"}
@@ -84,7 +84,7 @@ function Get-OnlyLatestVersionsBeta
     }
 
     Write-Host "Number of excluded versions: $($ToRemove.Count)"
-    Write-Verbose "Excluded Files:"
+    Write-Verbose "Excluded files due to version:"
     
     Foreach ($Removed in $ToRemove)
     {
@@ -1129,12 +1129,12 @@ function Get-StoreURLSBeta
     if ($BetaIncludeEncFiles.IsPresent -eq $False)
     {
         Write-Host "Excluding any encrypted files!"
-        $EncFiles = $objs | Where {$($_.FileName.Split(".")[-1]).startsWith("e")}
-        $objs = $objs | Where {$_ -notin $EncFiles}
+        $EncFiles = $ToReturn | Where {$($_.FileName.Split(".")[-1]).startsWith("e")}
+        $ToReturn = $ToReturn | Where {$_ -notin $EncFiles}
         
         if ($EncFiles.Count -gt 0 ) {
             Write-Host "Removed $($EncFiles.Count) encrypted files from the list."
-            Write-Verbose "Excluded files:"
+            Write-Verbose "Excluded encrypted files:"
             foreach ($encFile in $EncFiles)
             {
                 Write-Verbose "$($encFile.FileName)"
