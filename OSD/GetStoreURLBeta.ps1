@@ -58,8 +58,8 @@ function Get-OnlyLatestVersionsBeta
     <# Sometimes the packages contains multiple apps named different. Only filter main package.
     e.g.
           AppleInc.iTunes_12134.4.3008.0_neutral <-----------
-          AppleInc.iTunes.iPodVoiceOver_1430.3.3001.0_neutral_~_nzyj5cx40ttqa
-          AppleInc.iTunes.MobileDeviceSupport_18000.33.3001.0_neutral_~_nzyj5cx40ttqa
+          AppleInc.iTunes.iPodVoiceOver_1430.3.3001.0_neutral
+          AppleInc.iTunes.MobileDeviceSupport_18000.33.3001.0
     #>
 
     [array]$AffectedURLs = $AffectedURLs | Where {$_.FileName -like "$PkgName`_$($_.$Ver)*"}
