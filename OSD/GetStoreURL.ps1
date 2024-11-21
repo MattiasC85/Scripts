@@ -807,7 +807,7 @@ function Get-FE3FileXML
 return $FE3XML
 }
 
-function Get-StoreURLS
+function Get-StoreURLs
 {
 
 <#
